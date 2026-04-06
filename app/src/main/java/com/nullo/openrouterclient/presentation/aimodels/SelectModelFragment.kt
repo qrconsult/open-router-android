@@ -102,7 +102,8 @@ class SelectModelFragment : BottomSheetDialogFragment() {
         viewModel.uiState.collect { state ->
             binding.pbCloudLoading.isVisible = state.loadingCloudAiModels
             pinnedAiModelsAdapter.submitList(state.pinnedAiModels)
-            cloudAiModelsAdapter.submitList(state.cloudAiModels)
+            // Use toMutableList() to force ListAdapter to re-diff
+            cloudAiModelsAdapter.submitList(state.cloudAiModels.toMutableList())
         }
     }
 

@@ -186,8 +186,8 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             launch { handleLoadingFailureUseCase() }
             launch { collectUiState() }
-            launch { observeFilters() }
         }
+        observeFilters()
     }
 
     private suspend fun collectUiState() {
@@ -219,15 +219,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun observeFilters() {
-        combine(
-            _searchQuery,
-            _freeModelsOnly,
-            _cloudAiModels
-        ) { _, _, _ -> }
-            .collect {
-                applyModelFilters()
-            }
+    private fun observeFilters() {
+        viewModelScope.launch {
+            _searchQuery
+                .combine(_freeModelsOnly) { query, freeOnly -> query to freeOnly }
+                .collect { _ ->
+                    applyModelFilters()
+                }
+        }
     }
 
     private fun applyModelFilters() {
@@ -236,7 +235,6 @@ class MainViewModel @Inject constructor(
         val freeOnly = _freeModelsOnly.value
 
         val filtered = original.filter { model ->
-
             val matchesName = if (query.isBlank()) {
                 true
             } else {
