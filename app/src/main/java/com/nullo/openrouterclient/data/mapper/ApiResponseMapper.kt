@@ -17,8 +17,8 @@ import javax.inject.Inject
 private const val MODALITY_TEXT_TO_TEXT = "text->text"
 private const val KEY_SUPPORTS_REASONING = "reasoning"
 
-private fun isPriceFree(price: String): Boolean {
-    return price.toDoubleOrNull()?.let { it == 0.0 } == true
+private fun isPriceFree(price: String?): Boolean {
+    return price?.toDoubleOrNull()?.let { it == 0.0 } == true
 }
 
 fun AiModelsResponseDto.toAiModels(): List<AiModel> = aiModels
