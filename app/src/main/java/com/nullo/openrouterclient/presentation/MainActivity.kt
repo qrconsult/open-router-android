@@ -24,6 +24,7 @@ import com.nullo.openrouterclient.domain.entities.AiModel
 import com.nullo.openrouterclient.domain.entities.Message
 import com.nullo.openrouterclient.presentation.UiEvent.ClearInput
 import com.nullo.openrouterclient.presentation.UiEvent.ShowError
+import com.nullo.openrouterclient.presentation.UiEvent.ShowErrorDialog
 import com.nullo.openrouterclient.presentation.UiEvent.ShowMessage
 import com.nullo.openrouterclient.presentation.aimodels.SelectModelFragment
 import com.nullo.openrouterclient.presentation.chat.MessagesAdapter
@@ -120,6 +121,7 @@ class MainActivity : AppCompatActivity() {
             when (event) {
                 is ShowMessage -> showMessage(getString(event.messageStringRes))
                 is ShowError -> showMessage(getString(event.error.stringRes))
+                is ShowErrorDialog -> showErrorDialog(event.title, event.message)
                 is ClearInput -> clearInput(binding.etUserInput)
             }
         }
@@ -163,6 +165,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showErrorDialog(title: String, message: String) {
+        android.app.AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .setNeutralButton("Copy", { _, _ ->
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Error", "$title\n$message"))
+                Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
+            })
+            .show()
     }
 
     private fun displayReasoningSupport(supportsReasoning: Boolean) {

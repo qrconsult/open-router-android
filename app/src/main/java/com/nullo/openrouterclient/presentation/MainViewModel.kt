@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullo.openrouterclient.R
 import com.nullo.openrouterclient.domain.entities.AiModel
+import com.nullo.openrouterclient.domain.entities.Message
 import com.nullo.openrouterclient.domain.usecases.chat.ClearChatUseCase
 import com.nullo.openrouterclient.domain.usecases.chat.GetChatMessagesUseCase
 import com.nullo.openrouterclient.domain.usecases.chat.HandleLoadingFailureUseCase
@@ -17,7 +18,9 @@ import com.nullo.openrouterclient.domain.usecases.models.SelectAiModelUseCase
 import com.nullo.openrouterclient.domain.usecases.models.UnpinAiModelUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.GetApiKeyUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.GetContextEnabledUseCase
+import com.nullo.openrouterclient.domain.usecases.settings.GetLanguageUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.SetApiKeyUseCase
+import com.nullo.openrouterclient.domain.usecases.settings.SetLanguageUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.ToggleContextModeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -41,9 +44,11 @@ class MainViewModel @Inject constructor(
     private val getCurrentAiModelUseCase: GetCurrentAiModelUseCase,
     private val getContextEnabledUseCase: GetContextEnabledUseCase,
     private val getApiKeyUseCase: GetApiKeyUseCase,
+    private val getLanguageUseCase: GetLanguageUseCase,
     private val selectAiModelUseCase: SelectAiModelUseCase,
     private val toggleContextModeUseCase: ToggleContextModeUseCase,
     private val setApiKeyUseCase: SetApiKeyUseCase,
+    private val setLanguageUseCase: SetLanguageUseCase,
     private val pinAiModelUseCase: PinAiModelUseCase,
     private val unpinAiModelUseCase: UnpinAiModelUseCase,
 ) : ViewModel() {
@@ -93,8 +98,11 @@ class MainViewModel @Inject constructor(
                     apiKey = _uiState.value.apiKey
                 )
             } catch (e: Exception) {
-                Log.e(TAG_ERROR, "Error in sendQuery", e)
-                emitError(ErrorType.NETWORK_ERROR)
+                Log.e(TAG_ERROR, "Error in sendQuery: ${e.message}", e)
+                _uiEvents.emit(UiEvent.ShowErrorDialog(
+                    "Error: ${e::class.simpleName}",
+                    e.message ?: "Unknown error"
+                ))
             } finally {
                 _uiState.value = _uiState.value.copy(waitingForResponse = false)
             }
@@ -113,6 +121,10 @@ class MainViewModel @Inject constructor(
 
     fun toggleContextEnabled() {
         toggleContextModeUseCase()
+    }
+
+    fun setLanguage(language: String) {
+        setLanguageUseCase(language)
     }
 
     fun setApiKey(apiKey: String) {
@@ -134,8 +146,12 @@ class MainViewModel @Inject constructor(
             try {
                 val models = getCloudAiModelsUseCase()
                 _cloudAiModels.value = models
-            } catch (_: Exception) {
-                emitError(ErrorType.NETWORK_ERROR)
+            } catch (e: Exception) {
+                Log.e(TAG_ERROR, "Error loading cloud models: ${e.message}", e)
+                _uiEvents.emit(UiEvent.ShowErrorDialog(
+                    "Error loading models",
+                    e.message ?: "Unknown error"
+                ))
             } finally {
                 _uiState.value = _uiState.value.copy(loadingCloudAiModels = false)
             }
@@ -181,13 +197,22 @@ class MainViewModel @Inject constructor(
             getCurrentAiModelUseCase(),
             getContextEnabledUseCase(),
             getApiKeyUseCase(),
-        ) { messages, pinnedAiModels, currentAiModel, contextEnabled, apiKey ->
+            getLanguageUseCase(),
+        ) { array ->
+            val messages = array[0] as List<Message>
+            val pinnedAiModels = array[1] as List<AiModel>
+            val currentAiModel = array[2] as AiModel?
+            val contextEnabled = array[3] as Boolean
+            val apiKey = array[4] as String
+            val language = array[5] as String
+
             _uiState.value.copy(
                 messages = messages,
                 pinnedAiModels = pinnedAiModels,
                 currentAiModel = currentAiModel,
                 contextEnabled = contextEnabled,
-                apiKey = apiKey
+                apiKey = apiKey,
+                language = language
             )
         }.collect { newState ->
             _uiState.value = newState

@@ -26,6 +26,9 @@ class SettingsRepositoryImpl @Inject constructor(
     private val _apiKey = MutableStateFlow(getApiKey())
     override val apiKey = _apiKey.asStateFlow()
 
+    private val _language = MutableStateFlow(getLanguage())
+    override val language = _language.asStateFlow()
+
     private fun getSavedAiModel(): AiModel? {
         val modelAsString = settingsPrefs.getString(KEY_AI_MODEL, null)
         return runCatching {
@@ -57,6 +60,11 @@ class SettingsRepositoryImpl @Inject constructor(
         saveApiKey(apiKey)
     }
 
+    override fun setLanguage(language: String) {
+        _language.value = language
+        saveLanguage(language)
+    }
+
     private fun saveModel(aiModel: AiModel) {
         settingsPrefs.edit {
             putString(KEY_AI_MODEL, gson.toJson(aiModel))
@@ -75,11 +83,23 @@ class SettingsRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun getLanguage(): String {
+        return settingsPrefs.getString(KEY_LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
+    }
+
+    private fun saveLanguage(language: String) {
+        settingsPrefs.edit {
+            putString(KEY_LANGUAGE, language)
+        }
+    }
+
     companion object {
 
         const val KEY_AI_MODEL = "ai_model"
         const val KEY_API_KEY = "api_key"
         const val KEY_CONTEXT_ENABLED = "context_enabled"
+        const val KEY_LANGUAGE = "language"
+        const val DEFAULT_LANGUAGE = "en"
         const val API_KEY_EMPTY = ""
     }
 }

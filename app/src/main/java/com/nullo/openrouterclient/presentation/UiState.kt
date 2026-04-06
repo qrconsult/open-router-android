@@ -10,6 +10,7 @@ data class UiState(
     val currentAiModel: AiModel? = null,
     val contextEnabled: Boolean = false,
     val apiKey: String = "",
+    val language: String = "en",
     val waitingForResponse: Boolean = false,
     val loadingCloudAiModels: Boolean = false,
 )

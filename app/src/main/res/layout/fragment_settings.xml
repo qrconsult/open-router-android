@@ -76,4 +76,35 @@
         app:iconTint="@color/light_red"
         app:rippleColor="@color/red" />
 
+    <TextView
+        style="@style/TextAppearance.OpenRouterClient.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/language" />
+
+    <RadioGroup
+        android:id="@+id/rg_language"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_english"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/language_english"
+            android:buttonTint="@color/light_purple" />
+
+        <RadioButton
+            android:id="@+id/rb_russian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/language_russian"
+            android:buttonTint="@color/light_purple" />
+    </RadioGroup>
+
 </LinearLayout>

@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">OpenRouter::client</string>
+    <string name="context">контекст</string>
+    <string name="models">модели</string>
+    <string name="no_reasoning_support">Без поддержки рассуждений</string>
+    <string name="supports_reasoning">Поддерживает рассуждения</string>
+    <string name="reasoning">Рассуждения</string>
+    <string name="send">Отправить</string>
+    <string name="app_headline">OpenRouter::<font color="#D97EFF">client</font></string>
+    <string name="hint_user_query">Введите запрос…</string>
+    <string name="open_settings">Открыть настройки</string>
+    <string name="user_greeting">Рады вас видеть!</string>
+    <string name="error_unknown">Произошла неизвестная ошибка.</string>
+    <string name="error_blank_input">Запрос не может быть пустым.</string>
+    <string name="error_blank_api_key">API ключ не может быть пустым.</string>
+    <string name="error_no_api_key">Отсутствует API ключ.\nДобавьте его в настройках.</string>
+    <string name="error_missing_model">Выберите модель.</string>
+    <string name="error_missing_api_key">API ключ отсутствует.</string>
+    <string name="error_network">Что-то пошло не так. Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="error_cancelled">Запрос был отменён, так как приложение было закрыто.</string>
+    <string name="error_header_open_router">OpenRouter вернул ошибку</string>
+    <string name="error_header_network">Ошибка сети</string>
+    <string name="error_header_cancelled">Запрос отменён</string>
+    <string name="response_placeholder">Ожидание ответа от модели…</string>
+    <string name="select">Выбрать</string>
+    <string name="api_key">API ключ</string>
+    <string name="default_api_key_button">Использовать ключ по умолчанию</string>
+    <string name="save_api_key">Сохранить API ключ</string>
+    <string name="clear_chat_button">Очистить историю чата (с контекстом)</string>
+    <string name="pinned_models">Избранные модели</string>
+    <string name="pinned_models_placeholder">Добавьте избранные модели в закладки для быстрого доступа!</string>
+    <string name="available_models_header">Доступные модели</string>
+    <string name="available_models_description">Нажмите, чтобы explore AI модели из OpenRouter.</string>
+    <string name="available_models_modality_hint">Поддержка только текст-в-текст моделей.</string>
+    <string name="browse_models">Обзор моделей</string>
+    <string name="model_name">Название модели</string>
+    <string name="free">Бесплатно</string>
+    <string name="paid">Платно</string>
+    <string name="get_api_key_hint">Получите свой API ключ бесплатно на OpenRouter.ai.</string>
+    <string name="chat">Настройки чата</string>
+    <string name="saved">Сохранено!</string>
+    <string name="answer">Ответ:</string>
+    <string name="model_not_selected">Модель не выбрана</string>
+    <string name="model_select_hint">Выберите из каталога</string>
+    <string name="free_models_only">Только бесплатные модели</string>
+
+    <!-- Language settings -->
+    <string name="language">Язык</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_changed">Язык изменён. Перезапустите приложение.</string>
+</resources>

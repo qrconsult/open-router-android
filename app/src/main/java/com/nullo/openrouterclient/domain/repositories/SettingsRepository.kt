@@ -11,9 +11,13 @@ interface SettingsRepository {
 
     val apiKey: StateFlow<String>
 
+    val language: StateFlow<String>
+
     fun selectAiModel(aiModel: AiModel)
 
     fun toggleContextMode()
 
     fun setApiKey(apiKey: String)
+
+    fun setLanguage(language: String)
 }
