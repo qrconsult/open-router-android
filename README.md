@@ -14,6 +14,7 @@
 
 * Sending requests to a neural network through the OpenRouter API
 * Selecting and saving favorite AI models from the OpenRouter catalog
+* **Support for free models** — filter and use free-tier models (e.g., `qwen/qwen3.6-plus:free`) without any costs
 * Switching context mode (using chat history in the request)
 * Saving message history as a chat
 * Using a custom API key
