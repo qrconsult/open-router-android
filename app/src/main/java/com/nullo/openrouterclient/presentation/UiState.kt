@@ -1,5 +1,6 @@
 package com.nullo.openrouterclient.presentation
 
+import com.nullo.openrouterclient.domain.entities.AttachmentFile
 import com.nullo.openrouterclient.domain.entities.AiModel
 import com.nullo.openrouterclient.domain.entities.Message
 
@@ -14,6 +15,7 @@ data class UiState(
     val language: String = "en",
     val webSearchMode: String = "none",
     val braveApiKey: String = "",
+    val selectedFiles: List<AttachmentFile> = emptyList(),
     val waitingForResponse: Boolean = false,
     val loadingCloudAiModels: Boolean = false,
 )

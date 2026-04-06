@@ -8,6 +8,7 @@ sealed interface Message {
     data class Query(
         override val id: Long,
         override val text: String,
+        val attachments: List<AttachmentFile> = emptyList()
     ) : Message
 
     data class Loading(

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullo.openrouterclient.R
+import com.nullo.openrouterclient.domain.entities.AttachmentFile
 import com.nullo.openrouterclient.domain.entities.AiModel
 import com.nullo.openrouterclient.domain.entities.Message
 import com.nullo.openrouterclient.domain.usecases.chat.ClearChatUseCase
@@ -88,7 +89,7 @@ class MainViewModel @Inject constructor(
                 emitError(ErrorType.NO_API_KEY)
                 return@launch
             }
-            if (queryText.isBlank()) {
+            if (queryText.isBlank() && _uiState.value.selectedFiles.isEmpty()) {
                 emitError(ErrorType.BLANK_INPUT)
                 return@launch
             }
@@ -119,12 +120,16 @@ class MainViewModel @Inject constructor(
                 queryText
             }
 
+            val attachments = _uiState.value.selectedFiles
+            clearSelectedFiles()
+
             try {
                 sendQueryUseCase(
                     model = currentAiModel,
                     queryText = enhancedQueryText,
                     context = context,
-                    apiKey = _uiState.value.apiKey
+                    apiKey = _uiState.value.apiKey,
+                    attachments = attachments
                 )
             } catch (e: Exception) {
                 Log.e(TAG_ERROR, "Error in sendQuery: ${e.message}", e)
@@ -154,6 +159,14 @@ class MainViewModel @Inject constructor(
 
     fun toggleWebSearch() {
         _uiState.value = _uiState.value.copy(webSearchEnabled = !_uiState.value.webSearchEnabled)
+    }
+
+    fun addSelectedFiles(files: List<AttachmentFile>) {
+        _uiState.value = _uiState.value.copy(selectedFiles = _uiState.value.selectedFiles + files)
+    }
+
+    fun clearSelectedFiles() {
+        _uiState.value = _uiState.value.copy(selectedFiles = emptyList())
     }
 
     fun setLanguage(language: String) {

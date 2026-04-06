@@ -1,5 +1,6 @@
 package com.nullo.openrouterclient.presentation
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Paint
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -21,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nullo.openrouterclient.R
 import com.nullo.openrouterclient.databinding.ActivityMainBinding
 import com.nullo.openrouterclient.domain.entities.AiModel
+import com.nullo.openrouterclient.domain.entities.AttachmentFile
+import com.nullo.openrouterclient.domain.entities.FileProcessor
 import com.nullo.openrouterclient.domain.entities.Message
 import com.nullo.openrouterclient.presentation.UiEvent.ClearInput
 import com.nullo.openrouterclient.presentation.UiEvent.ShowError
@@ -45,6 +49,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val viewModel: MainViewModel by viewModels()
+
+    private val filePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        uris.forEach { uri ->
+            try {
+                val inputStream = contentResolver.openInputStream(uri) ?: return@forEach
+                val fileName = getFileName(uri) ?: "unknown"
+                val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
+                val fileSize = inputStream.available().toLong()
+
+                val attachment = when (FileProcessor.getAttachmentType(mimeType)) {
+                    AttachmentFile.AttachmentType.IMAGE -> {
+                        FileProcessor.processImage(inputStream, fileName, mimeType, fileSize)
+                    }
+                    AttachmentFile.AttachmentType.DOCUMENT -> {
+                        FileProcessor.processText(inputStream, fileName, mimeType, fileSize)
+                    }
+                }
+                viewModel.addSelectedFiles(listOf(attachment))
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error loading file: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun getFileName(uri: android.net.Uri): String? {
+        var name: String? = null
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val displayNameIndex = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                if (displayNameIndex >= 0) {
+                    name = it.getString(displayNameIndex)
+                }
+            }
+        }
+        return name
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,6 +187,9 @@ class MainActivity : AppCompatActivity() {
             btnSendQuery.setOnClickListener {
                 viewModel.sendQuery(etUserInput.text.toString().trim())
             }
+            btnAttachFile.setOnClickListener {
+                openFilePicker()
+            }
             btnSelectModel.setOnClickListener {
                 launchModelsMenu()
             }
@@ -151,6 +197,10 @@ class MainActivity : AppCompatActivity() {
                 launchSettingsMenu()
             }
         }
+    }
+
+    private fun openFilePicker() {
+        filePickerLauncher.launch("*/*")
     }
 
     private fun clearInput(editText: EditText) {

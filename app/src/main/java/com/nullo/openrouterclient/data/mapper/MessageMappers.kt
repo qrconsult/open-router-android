@@ -3,17 +3,44 @@ package com.nullo.openrouterclient.data.mapper
 import com.nullo.openrouterclient.data.Constants.ROLE_ASSISTANT
 import com.nullo.openrouterclient.data.Constants.ROLE_USER
 import com.nullo.openrouterclient.data.database.chat.MessageDbEntity
+import com.nullo.openrouterclient.data.network.dto.chat.ContentPart
+import com.nullo.openrouterclient.data.network.dto.chat.ImageUrl
 import com.nullo.openrouterclient.data.network.dto.chat.QueryDto
+import com.nullo.openrouterclient.domain.entities.AttachmentFile
 import com.nullo.openrouterclient.domain.entities.Message
 import com.nullo.openrouterclient.domain.entities.Message.AiResponse
 import com.nullo.openrouterclient.domain.entities.Message.Error
 import com.nullo.openrouterclient.domain.entities.Message.Loading
 import com.nullo.openrouterclient.domain.entities.Message.Query
 
-fun Query.toDto(): QueryDto = QueryDto(
-    role = ROLE_USER,
-    content = text
-)
+fun Query.toDto(): QueryDto {
+    val content: Any = if (attachments.isNotEmpty()) {
+        buildList {
+            if (text.isNotBlank()) {
+                add(ContentPart(type = "text", text = text))
+            }
+            attachments.forEach { attachment ->
+                when (attachment.type) {
+                    AttachmentFile.AttachmentType.IMAGE -> {
+                        add(ContentPart(
+                            type = "image_url",
+                            imageUrl = ImageUrl(url = "data:${attachment.mimeType};base64,${attachment.content}")
+                        ))
+                    }
+                    AttachmentFile.AttachmentType.DOCUMENT -> {
+                        add(ContentPart(
+                            type = "text",
+                            text = "📎 **${attachment.name}**\n${attachment.content}"
+                        ))
+                    }
+                }
+            }
+        }
+    } else {
+        text
+    }
+    return QueryDto(role = ROLE_USER, content = content)
+}
 
 fun List<Message>.toDto(): List<QueryDto> = map { message ->
     val role = when (message) {

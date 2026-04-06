@@ -1,5 +1,6 @@
 package com.nullo.openrouterclient.domain.usecases.chat
 
+import com.nullo.openrouterclient.domain.entities.AttachmentFile
 import com.nullo.openrouterclient.domain.entities.AiModel
 import com.nullo.openrouterclient.domain.entities.ChatResponseResult
 import com.nullo.openrouterclient.domain.entities.Message
@@ -15,12 +16,24 @@ class SendQueryUseCase @Inject constructor(
         model: AiModel,
         queryText: String,
         context: List<Message>? = null,
-        apiKey: String
+        apiKey: String,
+        attachments: List<AttachmentFile> = emptyList()
     ) {
-        val queryMessageId = chatRepository.addQueryMessage(queryText)
+        val displayText = if (attachments.isNotEmpty()) {
+            val attachmentNames = attachments.joinToString(", ") { it.name }
+            if (queryText.isNotBlank()) {
+                queryText
+            } else {
+                "📎 $attachmentNames"
+            }
+        } else {
+            queryText
+        }
+
+        val queryMessageId = chatRepository.addQueryMessage(displayText)
         val loadingMessageId = chatRepository.addLoadingMessage()
 
-        val query = Query(queryMessageId, queryText)
+        val query = Query(queryMessageId, queryText, attachments)
 
         try {
             val responseResult = chatRepository.sendQuery(model, query, context, apiKey)

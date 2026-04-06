@@ -13,5 +13,19 @@ data class QueryDto(
     @SerializedName("role")
     val role: String,
     @SerializedName("content")
-    val content: String,
+    val content: Any, // String or List<ContentPart> for multimodal
+)
+
+data class ContentPart(
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("text")
+    val text: String? = null,
+    @SerializedName("image_url")
+    val imageUrl: ImageUrl? = null
+)
+
+data class ImageUrl(
+    @SerializedName("url")
+    val url: String
 )
