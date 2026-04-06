@@ -1,5 +1,6 @@
 package com.nullo.openrouterclient.data.repository
 
+import android.util.Log
 import com.nullo.openrouterclient.data.database.aiModels.AiModelsDao
 import com.nullo.openrouterclient.data.mapper.toAiModel
 import com.nullo.openrouterclient.data.mapper.toAiModels
@@ -22,10 +23,23 @@ class AiModelsRepositoryImpl @Inject constructor(
 
     override suspend fun getCloudAiModels(): List<AiModel> {
         val response = apiService.getModels()
-        return response.takeIf { it.isSuccessful }
+        val models = response.takeIf { it.isSuccessful }
             ?.body()
             ?.toAiModels()
             ?: emptyList()
+
+        // DEBUG: Log pricing data for first 10 models
+        val freeModels = models.filter { it.freeToUse }
+        Log.d("MODELS_DEBUG", "Total models: ${models.size}, Free models: ${freeModels.size}")
+        freeModels.take(5).forEach { m ->
+            Log.d("MODELS_DEBUG", "FREE: ${m.name} (${m.queryName})")
+        }
+        // Log a few non-free models to see their pricing
+        models.filterNot { it.freeToUse }.take(3).forEach { m ->
+            Log.d("MODELS_DEBUG", "PAID: ${m.name} (${m.queryName})")
+        }
+
+        return models
     }
 
     override suspend fun pinAiModel(aiModel: AiModel) {

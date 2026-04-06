@@ -1,5 +1,6 @@
 package com.nullo.openrouterclient.data.mapper
 
+import android.util.Log
 import com.google.gson.Gson
 import com.nullo.openrouterclient.data.Constants.UNDEFINED_ID
 import com.nullo.openrouterclient.data.ErrorProvider
@@ -17,17 +18,36 @@ import javax.inject.Inject
 private const val MODALITY_TEXT_TO_TEXT = "text->text"
 private const val KEY_SUPPORTS_REASONING = "reasoning"
 
+private var debugLoggedCount = 0
+private var debugLogged = false
+
 private fun isPriceFree(price: String?): Boolean {
     return price?.toDoubleOrNull()?.let { it == 0.0 } == true
+}
+
+private fun isFreeModel(queryName: String, pricing: com.nullo.openrouterclient.data.network.dto.models.PricingDto): Boolean {
+    // Check for :free suffix in model ID (e.g. qwen/qwen3.6-plus:free)
+    if (queryName.endsWith(":free")) return true
+    
+    // Also check pricing values
+    return with(pricing) {
+        isPriceFree(prompt) && isPriceFree(request) && isPriceFree(completion)
+    }
 }
 
 fun AiModelsResponseDto.toAiModels(): List<AiModel> = aiModels
     .filter { it.architectureDto.modality == MODALITY_TEXT_TO_TEXT }
     .map {
         val supportsReasoning = it.supportedParameters?.contains(KEY_SUPPORTS_REASONING)
-        val freeToUse = with(it.pricing) {
-            isPriceFree(prompt) && isPriceFree(request) && isPriceFree(completion)
+        val freeToUse = isFreeModel(it.queryName, it.pricing)
+
+        // DEBUG: Log pricing for first 10 models
+        if (!debugLogged) {
+            Log.d("PRICING_DEBUG", "Model: ${it.name} (${it.queryName})")
+            Log.d("PRICING_DEBUG", "  prompt='${it.pricing.prompt}' request='${it.pricing.request}' completion='${it.pricing.completion}'")
+            Log.d("PRICING_DEBUG", "  endsWith(:free)=${it.queryName.endsWith(":free")} freeToUse=$freeToUse")
         }
+
         AiModel(
             id = UNDEFINED_ID,
             name = it.name,
@@ -35,6 +55,11 @@ fun AiModelsResponseDto.toAiModels(): List<AiModel> = aiModels
             supportsReasoning = supportsReasoning ?: false,
             freeToUse = freeToUse
         )
+    }.also {
+        debugLoggedCount++
+        if (debugLoggedCount >= 10) {
+            debugLogged = true
+        }
     }
 
 fun ErrorResponseDto.toDisplayString(): String = with(error) {
