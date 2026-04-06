@@ -15,10 +15,12 @@
 * Sending requests to a neural network through the OpenRouter API
 * Selecting and saving favorite AI models from the OpenRouter catalog
 * **Support for free models** — filter and use free-tier models (e.g., `qwen/qwen3.6-plus:free`) without any costs
+* **Bilingual interface** — switch between English and Russian in settings
 * Switching context mode (using chat history in the request)
 * Saving message history as a chat
 * Using a custom API key
 * Clearing chat history
+* Detailed error reporting — see the actual error message instead of generic "check your connection"
 
 ## Screenshots
 
@@ -50,12 +52,21 @@ Dependency Injection is handled via Hilt.
 1. Clone the repository:
 
 ```bash
-  git clone git@github.com:Nu11Object/open-router-android-client.git
-  cd open-router-android-client
+  git clone https://github.com/qrconsult/open-router-android.git
+  cd open-router-android
 ```
 
-2. Build the project and run the application.
-3. Add your OpenRouter API key:
+2. Build the project using Gradle:
+
+```bash
+  ./gradlew assembleDebug
+```
+
+   Or open in Android Studio and use **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
+
+3. The APK will be in `app/build/outputs/apk/debug/app-debug.apk`
+
+4. Add your OpenRouter API key:
 
    * Go to [OpenRouter.ai](https://openrouter.ai/) and register.
    * Create a new API key in [profile settings](https://openrouter.ai/settings/keys).
