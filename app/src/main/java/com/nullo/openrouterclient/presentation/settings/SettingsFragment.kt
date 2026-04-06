@@ -70,14 +70,18 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     "none" -> 0
                     "openrouter_online" -> 1
                     "brave" -> 2
+                    "yandex" -> 3
+                    "google" -> 4
+                    "duckduckgo" -> 5
                     else -> 0
                 }
                 spinnerWebSearchMode.setSelection(modeIndex)
 
                 // Show/hide Brave API key field
-                tilBraveApiKey.isVisible = state.webSearchMode == "brave"
-                tvBraveApiKeyHint.isVisible = state.webSearchMode == "brave"
-                btnSaveBraveKey.isVisible = state.webSearchMode == "brave"
+                val showBraveKey = state.webSearchMode == "brave"
+                tilBraveApiKey.isVisible = showBraveKey
+                tvBraveApiKeyHint.isVisible = showBraveKey
+                btnSaveBraveKey.isVisible = showBraveKey
                 etBraveApiKey.setText(state.braveApiKey)
             }
         }

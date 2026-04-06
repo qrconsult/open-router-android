@@ -26,6 +26,8 @@ import com.nullo.openrouterclient.domain.usecases.settings.SetBraveApiKeyUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.SetLanguageUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.SetWebSearchModeUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.ToggleContextModeUseCase
+import com.nullo.openrouterclient.domain.usecases.websearch.WebSearchMode
+import com.nullo.openrouterclient.domain.usecases.websearch.WebSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -59,6 +61,7 @@ class MainViewModel @Inject constructor(
     private val setBraveApiKeyUseCase: SetBraveApiKeyUseCase,
     private val pinAiModelUseCase: PinAiModelUseCase,
     private val unpinAiModelUseCase: UnpinAiModelUseCase,
+    private val webSearchUseCase: WebSearchUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -98,10 +101,28 @@ class MainViewModel @Inject constructor(
             _uiEvents.emit(UiEvent.ClearInput)
 
             val context = if (_uiState.value.contextEnabled) _uiState.value.messages else null
+            
+            // Perform web search if enabled
+            val enhancedQueryText = if (_uiState.value.webSearchEnabled) {
+                val searchResults = webSearchUseCase.search(
+                    query = queryText,
+                    mode = WebSearchMode.valueOf(_uiState.value.webSearchMode.uppercase()),
+                    braveApiKey = _uiState.value.braveApiKey
+                )
+                val searchContext = webSearchUseCase.formatSearchResults(searchResults)
+                if (searchContext.isNotEmpty()) {
+                    "$searchContext\n\nUser query: $queryText"
+                } else {
+                    queryText
+                }
+            } else {
+                queryText
+            }
+
             try {
                 sendQueryUseCase(
                     model = currentAiModel,
-                    queryText = queryText,
+                    queryText = enhancedQueryText,
                     context = context,
                     apiKey = _uiState.value.apiKey
                 )
@@ -129,6 +150,10 @@ class MainViewModel @Inject constructor(
 
     fun toggleContextEnabled() {
         toggleContextModeUseCase()
+    }
+
+    fun toggleWebSearch() {
+        _uiState.value = _uiState.value.copy(webSearchEnabled = !_uiState.value.webSearchEnabled)
     }
 
     fun setLanguage(language: String) {

@@ -148,6 +148,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_toggle_web_search"
+                style="@style/OptionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/web_search"
+                android:visibility="gone"
+                app:icon="@drawable/ic_cloud"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_toggle_context" />
+
 
             <ImageView
                 android:id="@+id/iv_reasoning_support"

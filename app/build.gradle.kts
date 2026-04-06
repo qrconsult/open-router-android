@@ -74,6 +74,9 @@ dependencies {
     // Markdown support
     implementation(libs.core)
 
+    // Jsoup for web scraping
+    implementation("org.jsoup:jsoup:1.17.2")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

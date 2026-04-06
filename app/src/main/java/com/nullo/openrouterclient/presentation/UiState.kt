@@ -9,6 +9,7 @@ data class UiState(
     val cloudAiModels: List<AiModel> = emptyList(),
     val currentAiModel: AiModel? = null,
     val contextEnabled: Boolean = false,
+    val webSearchEnabled: Boolean = false,
     val apiKey: String = "",
     val language: String = "en",
     val webSearchMode: String = "none",

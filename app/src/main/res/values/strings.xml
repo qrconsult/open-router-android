@@ -58,7 +58,11 @@
     <string name="web_search_none">None</string>
     <string name="web_search_openrouter">OpenRouter :online</string>
     <string name="web_search_brave">Brave Search</string>
+    <string name="web_search_yandex">Yandex</string>
+    <string name="web_search_google">Google</string>
+    <string name="web_search_duckduckgo">DuckDuckGo</string>
     <string name="brave_api_key">Brave API Key</string>
     <string name="brave_api_key_hint">Get at https://brave.com/search/api/</string>
     <string name="web_search_description">Enable web search to get up-to-date information</string>
+    <string name="search_provider">Search provider</string>
 </resources>

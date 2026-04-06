@@ -4,11 +4,17 @@
         <item>@string/web_search_none</item>
         <item>@string/web_search_openrouter</item>
         <item>@string/web_search_brave</item>
+        <item>@string/web_search_yandex</item>
+        <item>@string/web_search_google</item>
+        <item>@string/web_search_duckduckgo</item>
     </string-array>
 
     <string-array name="web_search_modes_values">
         <item>none</item>
         <item>openrouter_online</item>
         <item>brave</item>
+        <item>yandex</item>
+        <item>google</item>
+        <item>duckduckgo</item>
     </string-array>
 </resources>

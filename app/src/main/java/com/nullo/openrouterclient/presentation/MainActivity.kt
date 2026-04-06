@@ -91,8 +91,14 @@ class MainActivity : AppCompatActivity() {
             updateMessages(state.messages)
             updateCurrentAiModel(state.currentAiModel)
             updateContextButton(state.contextEnabled)
+            updateWebSearchButton(state.webSearchMode)
             binding.btnSendQuery.isEnabled = !state.waitingForResponse
         }
+    }
+
+    private fun updateWebSearchButton(webSearchMode: String) {
+        val isEnabled = webSearchMode != "none"
+        binding.btnToggleWebSearch.isVisible = isEnabled
     }
 
     private fun updateMessages(messages: List<Message>) {
@@ -131,6 +137,9 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             btnToggleContext.setOnClickListener {
                 viewModel.toggleContextEnabled()
+            }
+            btnToggleWebSearch.setOnClickListener {
+                viewModel.toggleWebSearch()
             }
             btnSendQuery.setOnClickListener {
                 viewModel.sendQuery(etUserInput.text.toString().trim())
