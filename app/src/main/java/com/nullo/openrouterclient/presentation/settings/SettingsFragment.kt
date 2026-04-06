@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -41,6 +44,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         observeViewModel()
         setupClickListeners()
+        setupWebSearchSpinner()
     }
 
     private fun observeViewModel() {
@@ -60,6 +64,21 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 // Update language selection
                 rbEnglish.isChecked = state.language == "en"
                 rbRussian.isChecked = state.language == "ru"
+
+                // Update web search mode
+                val modeIndex = when (state.webSearchMode) {
+                    "none" -> 0
+                    "openrouter_online" -> 1
+                    "brave" -> 2
+                    else -> 0
+                }
+                spinnerWebSearchMode.setSelection(modeIndex)
+
+                // Show/hide Brave API key field
+                tilBraveApiKey.isVisible = state.webSearchMode == "brave"
+                tvBraveApiKeyHint.isVisible = state.webSearchMode == "brave"
+                btnSaveBraveKey.isVisible = state.webSearchMode == "brave"
+                etBraveApiKey.setText(state.braveApiKey)
             }
         }
     }
@@ -86,12 +105,42 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 viewModel.setLanguage(language)
                 Toast.makeText(context, R.string.language_changed, Toast.LENGTH_SHORT).show()
             }
+
+            btnSaveBraveKey.setOnClickListener {
+                val key = etBraveApiKey.text.toString().trim()
+                if (key.isBlank()) {
+                    Toast.makeText(context, R.string.error_blank_api_key, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                viewModel.setBraveApiKey(key)
+                Toast.makeText(context, R.string.saved, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun setAppLocale(languageCode: String) {
         val localeList = LocaleListCompat.forLanguageTags(languageCode)
         AppCompatDelegate.setApplicationLocales(localeList)
+    }
+
+    private fun setupWebSearchSpinner() {
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.web_search_modes,
+            android.R.layout.simple_spinner_item
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        binding.spinnerWebSearchMode.adapter = adapter
+
+        binding.spinnerWebSearchMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val mode = resources.getStringArray(R.array.web_search_modes_values)[position]
+                viewModel.setWebSearchMode(mode)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
     override fun onDestroyView() {

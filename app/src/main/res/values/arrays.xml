@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="web_search_modes">
+        <item>@string/web_search_none</item>
+        <item>@string/web_search_openrouter</item>
+        <item>@string/web_search_brave</item>
+    </string-array>
+
+    <string-array name="web_search_modes_values">
+        <item>none</item>
+        <item>openrouter_online</item>
+        <item>brave</item>
+    </string-array>
+</resources>

@@ -49,4 +49,14 @@
     <string name="language_english">English</string>
     <string name="language_russian">Русский</string>
     <string name="language_changed">Язык изменён. Перезапустите приложение.</string>
+
+    <!-- Web Search -->
+    <string name="web_search">Поиск в интернете</string>
+    <string name="web_search_mode">Режим поиска</string>
+    <string name="web_search_none">Отключён</string>
+    <string name="web_search_openrouter">OpenRouter :online</string>
+    <string name="web_search_brave">Brave Search</string>
+    <string name="brave_api_key">Brave API ключ</string>
+    <string name="brave_api_key_hint">Получите на https://brave.com/search/api/</string>
+    <string name="web_search_description">Включите поиск для получения актуальной информации</string>
 </resources>

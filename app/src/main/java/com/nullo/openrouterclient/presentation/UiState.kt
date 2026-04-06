@@ -11,6 +11,8 @@ data class UiState(
     val contextEnabled: Boolean = false,
     val apiKey: String = "",
     val language: String = "en",
+    val webSearchMode: String = "none",
+    val braveApiKey: String = "",
     val waitingForResponse: Boolean = false,
     val loadingCloudAiModels: Boolean = false,
 )

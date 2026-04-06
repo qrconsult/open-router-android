@@ -29,6 +29,12 @@ class SettingsRepositoryImpl @Inject constructor(
     private val _language = MutableStateFlow(getLanguage())
     override val language = _language.asStateFlow()
 
+    private val _webSearchMode = MutableStateFlow(getWebSearchMode())
+    override val webSearchMode = _webSearchMode.asStateFlow()
+
+    private val _braveApiKey = MutableStateFlow(getBraveApiKey())
+    override val braveApiKey = _braveApiKey.asStateFlow()
+
     private fun getSavedAiModel(): AiModel? {
         val modelAsString = settingsPrefs.getString(KEY_AI_MODEL, null)
         return runCatching {
@@ -65,6 +71,16 @@ class SettingsRepositoryImpl @Inject constructor(
         saveLanguage(language)
     }
 
+    override fun setWebSearchMode(mode: String) {
+        _webSearchMode.value = mode
+        saveWebSearchMode(mode)
+    }
+
+    override fun setBraveApiKey(key: String) {
+        _braveApiKey.value = key
+        saveBraveApiKey(key)
+    }
+
     private fun saveModel(aiModel: AiModel) {
         settingsPrefs.edit {
             putString(KEY_AI_MODEL, gson.toJson(aiModel))
@@ -93,13 +109,36 @@ class SettingsRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun getWebSearchMode(): String {
+        return settingsPrefs.getString(KEY_WEB_SEARCH_MODE, DEFAULT_WEB_SEARCH_MODE) ?: DEFAULT_WEB_SEARCH_MODE
+    }
+
+    private fun saveWebSearchMode(mode: String) {
+        settingsPrefs.edit {
+            putString(KEY_WEB_SEARCH_MODE, mode)
+        }
+    }
+
+    private fun getBraveApiKey(): String {
+        return settingsPrefs.getString(KEY_BRAVE_API_KEY, "") ?: ""
+    }
+
+    private fun saveBraveApiKey(key: String) {
+        settingsPrefs.edit {
+            putString(KEY_BRAVE_API_KEY, key)
+        }
+    }
+
     companion object {
 
         const val KEY_AI_MODEL = "ai_model"
         const val KEY_API_KEY = "api_key"
         const val KEY_CONTEXT_ENABLED = "context_enabled"
         const val KEY_LANGUAGE = "language"
+        const val KEY_WEB_SEARCH_MODE = "web_search_mode"
+        const val KEY_BRAVE_API_KEY = "brave_api_key"
         const val DEFAULT_LANGUAGE = "en"
+        const val DEFAULT_WEB_SEARCH_MODE = "none"
         const val API_KEY_EMPTY = ""
     }
 }

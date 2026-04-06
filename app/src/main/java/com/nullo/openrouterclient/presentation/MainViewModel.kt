@@ -17,10 +17,14 @@ import com.nullo.openrouterclient.domain.usecases.models.PinAiModelUseCase
 import com.nullo.openrouterclient.domain.usecases.models.SelectAiModelUseCase
 import com.nullo.openrouterclient.domain.usecases.models.UnpinAiModelUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.GetApiKeyUseCase
+import com.nullo.openrouterclient.domain.usecases.settings.GetBraveApiKeyUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.GetContextEnabledUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.GetLanguageUseCase
+import com.nullo.openrouterclient.domain.usecases.settings.GetWebSearchModeUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.SetApiKeyUseCase
+import com.nullo.openrouterclient.domain.usecases.settings.SetBraveApiKeyUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.SetLanguageUseCase
+import com.nullo.openrouterclient.domain.usecases.settings.SetWebSearchModeUseCase
 import com.nullo.openrouterclient.domain.usecases.settings.ToggleContextModeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -45,10 +49,14 @@ class MainViewModel @Inject constructor(
     private val getContextEnabledUseCase: GetContextEnabledUseCase,
     private val getApiKeyUseCase: GetApiKeyUseCase,
     private val getLanguageUseCase: GetLanguageUseCase,
+    private val getWebSearchModeUseCase: GetWebSearchModeUseCase,
+    private val getBraveApiKeyUseCase: GetBraveApiKeyUseCase,
     private val selectAiModelUseCase: SelectAiModelUseCase,
     private val toggleContextModeUseCase: ToggleContextModeUseCase,
     private val setApiKeyUseCase: SetApiKeyUseCase,
     private val setLanguageUseCase: SetLanguageUseCase,
+    private val setWebSearchModeUseCase: SetWebSearchModeUseCase,
+    private val setBraveApiKeyUseCase: SetBraveApiKeyUseCase,
     private val pinAiModelUseCase: PinAiModelUseCase,
     private val unpinAiModelUseCase: UnpinAiModelUseCase,
 ) : ViewModel() {
@@ -127,6 +135,14 @@ class MainViewModel @Inject constructor(
         setLanguageUseCase(language)
     }
 
+    fun setWebSearchMode(mode: String) {
+        setWebSearchModeUseCase(mode)
+    }
+
+    fun setBraveApiKey(key: String) {
+        setBraveApiKeyUseCase(key)
+    }
+
     fun setApiKey(apiKey: String) {
         viewModelScope.launch {
             if (apiKey.isBlank()) {
@@ -198,6 +214,8 @@ class MainViewModel @Inject constructor(
             getContextEnabledUseCase(),
             getApiKeyUseCase(),
             getLanguageUseCase(),
+            getWebSearchModeUseCase(),
+            getBraveApiKeyUseCase(),
         ) { array ->
             val messages = array[0] as List<Message>
             val pinnedAiModels = array[1] as List<AiModel>
@@ -205,6 +223,8 @@ class MainViewModel @Inject constructor(
             val contextEnabled = array[3] as Boolean
             val apiKey = array[4] as String
             val language = array[5] as String
+            val webSearchMode = array[6] as String
+            val braveApiKey = array[7] as String
 
             _uiState.value.copy(
                 messages = messages,
@@ -212,7 +232,9 @@ class MainViewModel @Inject constructor(
                 currentAiModel = currentAiModel,
                 contextEnabled = contextEnabled,
                 apiKey = apiKey,
-                language = language
+                language = language,
+                webSearchMode = webSearchMode,
+                braveApiKey = braveApiKey
             )
         }.collect { newState ->
             _uiState.value = newState

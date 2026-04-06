@@ -107,4 +107,66 @@
             android:buttonTint="@color/light_purple" />
     </RadioGroup>
 
+    <TextView
+        style="@style/TextAppearance.OpenRouterClient.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/web_search" />
+
+    <TextView
+        style="@style/TextAppearance.OpenRouterClient.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/web_search_description" />
+
+    <Spinner
+        android:id="@+id/spinner_web_search_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_brave_api_key"
+        style="@style/TextAppearance.OpenRouterClient.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/brave_api_key"
+        android:visibility="gone"
+        app:boxStrokeColor="@color/light_purple"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:endIconDrawable="@drawable/ic_clear"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/light_purple"
+        app:hintTextColor="@color/light_purple">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_brave_api_key"
+            style="@style/TextAppearance.OpenRouterClient.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save_brave_key"
+        style="@style/AccentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"
+        android:text="@string/save_api_key" />
+
+    <TextView
+        style="@style/TextAppearance.OpenRouterClient.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/brave_api_key_hint"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:id="@+id/tv_brave_api_key_hint" />
+
 </LinearLayout>

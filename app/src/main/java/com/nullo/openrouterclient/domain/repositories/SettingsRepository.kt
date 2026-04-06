@@ -13,6 +13,10 @@ interface SettingsRepository {
 
     val language: StateFlow<String>
 
+    val webSearchMode: StateFlow<String>
+
+    val braveApiKey: StateFlow<String>
+
     fun selectAiModel(aiModel: AiModel)
 
     fun toggleContextMode()
@@ -20,4 +24,8 @@ interface SettingsRepository {
     fun setApiKey(apiKey: String)
 
     fun setLanguage(language: String)
+
+    fun setWebSearchMode(mode: String)
+
+    fun setBraveApiKey(key: String)
 }
